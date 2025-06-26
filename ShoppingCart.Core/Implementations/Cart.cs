@@ -3,31 +3,31 @@ using ShoppingCart.Core.Interfaces;
 namespace ShoppingCart.Core.Implementations;
 
 /// <summary>
-/// A shopping cart implementation that manages items and calculates totals.
+/// A shopping cart implementation that manages items and calculates totals using in-memory storage.
 /// </summary>
-public class Cart : ICart
+public class InMemoryCart : BaseObservableCart
 {
     private readonly IProductService _productService;
     private readonly Dictionary<string, int> _items;
 
     /// <summary>
-    /// Initializes a new instance of the Cart class.
+    /// Initializes a new instance of the InMemoryCart class.
     /// </summary>
     /// <param name="productService">The product service for price lookups.</param>
     /// <exception cref="ArgumentNullException">Thrown when productService is null.</exception>
-    public Cart(IProductService productService)
+    public InMemoryCart(IProductService productService)
     {
         _productService = productService ?? throw new ArgumentNullException(nameof(productService));
         _items = new Dictionary<string, int>();
     }
 
     /// <summary>
-    /// Adds an item to the cart with the specified quantity.
+    /// Core implementation of adding an item to the cart.
     /// </summary>
     /// <param name="productId">The product identifier to add.</param>
     /// <param name="quantity">The quantity to add.</param>
     /// <exception cref="ArgumentException">Thrown when product is not found or quantity is invalid.</exception>
-    public void AddItem(string productId, int quantity)
+    protected override void AddItemCore(string productId, int quantity)
     {
         if (string.IsNullOrWhiteSpace(productId))
             throw new ArgumentException("Product ID cannot be null or empty", nameof(productId));
@@ -47,11 +47,11 @@ public class Cart : ICart
     }
 
     /// <summary>
-    /// Removes all quantities of the specified product from the cart.
+    /// Core implementation of removing an item from the cart.
     /// </summary>
     /// <param name="productId">The product identifier to remove.</param>
     /// <exception cref="ArgumentException">Thrown when product ID is invalid.</exception>
-    public void RemoveItem(string productId)
+    protected override void RemoveItemCore(string productId)
     {
         if (string.IsNullOrWhiteSpace(productId))
             throw new ArgumentException("Product ID cannot be null or empty", nameof(productId));
@@ -61,20 +61,29 @@ public class Cart : ICart
     }
 
     /// <summary>
-    /// Calculates the total cost of all items in the cart.
+    /// Core implementation of calculating the total.
     /// </summary>
     /// <returns>The total cost as a decimal.</returns>
-    public decimal Total()
+    protected override decimal TotalCore()
     {
         return _items.Sum(item => _productService.GetPrice(item.Key) * item.Value);
     }
 
     /// <summary>
-    /// Returns a dictionary of items and their quantities in the cart.
+    /// Core implementation of getting cart items.
     /// </summary>
     /// <returns>Dictionary containing product IDs and quantities.</returns>
-    public Dictionary<string, int> Items()
+    protected override Dictionary<string, int> ItemsCore()
     {
         return new Dictionary<string, int>(_items);
+    }
+
+    /// <summary>
+    /// Gets the number of items in the cart.
+    /// </summary>
+    /// <returns>The number of distinct items.</returns>
+    protected override int GetItemCountCore()
+    {
+        return _items.Count;
     }
 } 

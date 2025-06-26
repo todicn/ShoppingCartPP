@@ -31,4 +31,16 @@ public interface ICart
     /// </summary>
     /// <returns>Dictionary containing product IDs and quantities.</returns>
     Dictionary<string, int> Items();
+
+    /// <summary>
+    /// Subscribes an observer to cart operations.
+    /// </summary>
+    /// <param name="observer">The observer to subscribe.</param>
+    void Subscribe(ICartObserver observer);
+
+    /// <summary>
+    /// Unsubscribes an observer from cart operations.
+    /// </summary>
+    /// <param name="observer">The observer to unsubscribe.</param>
+    void Unsubscribe(ICartObserver observer);
 } 

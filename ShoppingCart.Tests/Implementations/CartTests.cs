@@ -5,24 +5,24 @@ using ShoppingCart.Core.Interfaces;
 namespace ShoppingCart.Tests.Implementations;
 
 /// <summary>
-/// Unit tests for the Cart class.
+/// Unit tests for the InMemoryCart class.
 /// </summary>
 public class CartTests
 {
     private readonly IProductService _productService;
-    private readonly Cart _cart;
+    private readonly InMemoryCart _cart;
 
     public CartTests()
     {
         _productService = new ProductService();
-        _cart = new Cart(_productService);
+        _cart = new InMemoryCart(_productService);
     }
 
     [Fact]
     public void Constructor_WithNullProductService_ThrowsArgumentNullException()
     {
         // Act & Assert
-        var exception = Assert.Throws<ArgumentNullException>(() => new Cart(null!));
+        var exception = Assert.Throws<ArgumentNullException>(() => new InMemoryCart(null!));
         Assert.Equal("productService", exception.ParamName);
     }
 
@@ -30,7 +30,7 @@ public class CartTests
     public void Constructor_WithValidProductService_CreatesEmptyCart()
     {
         // Arrange & Act
-        var cart = new Cart(_productService);
+        var cart = new InMemoryCart(_productService);
 
         // Assert
         Assert.Empty(cart.Items());
