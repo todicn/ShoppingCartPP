@@ -47,10 +47,10 @@ public class RedisCart : BaseObservableCart, IDisposable
         if (quantity <= 0)
             throw new ArgumentException("Quantity must be greater than zero", nameof(quantity));
 
-        if (!_productService.ProductExists(productId))
+        var normalizedProductId = productId.Trim().ToLowerInvariant();
+        
+        if (!_productService.ProductExists(normalizedProductId))
             throw new ArgumentException($"Product '{productId}' not found", nameof(productId));
-
-        var normalizedProductId = productId.ToLowerInvariant();
         
         // Get current cart data
         var currentItems = GetCartFromRedis();
@@ -73,7 +73,7 @@ public class RedisCart : BaseObservableCart, IDisposable
         if (string.IsNullOrWhiteSpace(productId))
             throw new ArgumentException("Product ID cannot be null or empty", nameof(productId));
 
-        var normalizedProductId = productId.ToLowerInvariant();
+        var normalizedProductId = productId.Trim().ToLowerInvariant();
         
         // Get current cart data
         var currentItems = GetCartFromRedis();
